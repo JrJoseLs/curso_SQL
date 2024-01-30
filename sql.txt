@@ -1,0 +1,312 @@
+https://www.youtube.com/watch?v=uUdKAYl-F7g
+
+
+Acceso al SQL ROOT
+987654321
+
+---------------Consultas de SQL----------------------------------
+
+1. Para crear base de datos:
+	Create database NOMBRE;
+
+
+2. para ver todos los registros de bases de datos:
+				show databasese;
+2.1 VER TABLAS CREADAS:
+				SHOW CREATE TABLE nombre;
+2.2 Comentar lineas en sql dos guiones (--)
+				--
+2.3 Listar todos los registros que hemos ingresado:
+				SELECT * FROM nombre;
+	Ver solo 1 registro:
+				SELECT * FROM nombre WHERE id = 1;
+	Ver registro de tabla con string
+				SELECT * FROM nombre WHERE columna = 'nombre';
+	Con "AND" agregamos otra condicion a nuestra busqueda:
+				SELECT * FROM nombre WHERE columna = 'nombre' AND columna = 'nombre';
+
+3. Crear tabla
+			Create table NOMBRE ();
+
+4. dentro del parentesis indicamos columnas y identificador:
+			Create table NOMBRE(
+				id
+				
+			);
+
+---------Luego indicar el tipo de datos:
+
+id = identificador
+float = numeros decimales
+INT = numero enteros
+varchar = cadena de caracteres, palabras, oraciones o frases; "hola mundo" "chanchito" "etc..."
+
+
+
+NOTAS----
+INT = integer
+
+------------------------------------------
+
+5. Para indicar una primary o identificador unico es:
+	PRIMARY KEY (NOMBRE DE LA CULUMNA)
+		PRIMARY KEY (id)
+
+
+6. Para insertar datos dentro de la tabla:
+	INSERT INTO nombretabla (columnas) Values ('valores', 'estado');
+
+
+7. INDICAR VALOR A LA PRIMARY KEY "para que se auto incremente":
+	modificar tabla ya creada
+		ALTER TABLE tablename MODIFY COLUMN id int auto_increment;
+
+
+8. PARA CREAR TABLA COMPLETA CON AUTO INCREMENTAR:
+	con el comando:
+			SHOW CREATE TABLE nombre;
+				luego click derecho "COPY FIELD"...
+
+			pegamos debajo y eliminamos comillas simples de principio y final...
+			y quitamos todo despues del cierre del parentesis.
+Ex:
+
+CREATE TABLE `animales` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `Tipo` varchar(255) DEFAULT NULL,
+  `estado` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) 
+
+
+9. Actualizar registro que ya se encuentra en las tablas:
+		UPDATE tablename SET columna = 'nombre' WHERE id = numero;
+
+10. Eliminar los registros de la base de datos:
+		DELETE FROM tablename WHERE columna = 'nombre';
+
+	Nos indica error: SQL c protege y debemos indicar necesariamente el "id"... error 1175
+
+
+
+
+
+----------------------------------------------------------------------
+
+
+
+---------------------------READ----------------------------------------
+read: es otra forma de seleccionar los elementos dentro de una tabla
+	ex:
+	Nos devuelve el primer registro que envuentre
+		Select * from tablename limit 1;
+	Para buscar entre una fila de nuemeros, desde mayor a....
+		Select * from tablename where columna > 15;
+		Select * from tablename where columna >= 15;
+		Select * from tablename where columna > 20 AND columna = 'nombre';
+
+	Registro que cumplen caracteristicas similares. (OR)
+		Select * from nombre where columna > 20 OR columna = 'nombre';
+
+---------NEGACION---------- (!=)
+Select * from tablename where columna != 'nombre';
+
+-----ENTRE o comparar---- (between)
+Select * from tablename where columna between 15 and 30
+
+----Buscar entre la base de datos en general por el nombre---- (%nombre%)
+Select * from tablename where columna like '%nombre%';
+
+para indicar que la palabra nombre incie como sea, pero que termine en un nombre ('%nombre')
+Select * from tablename where columna like '%nombre';
+
+en cambio ('nombre%'):
+	Busca los que empiecen con nombre, no los que terminen....
+--------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------
+
+------ORDENAR LAS BUSQUEDAS POR EDAD ascendente-----------
+select * from tablename order by columna asc;
+
+----ordern desendente:
+select * from tablename order by columna desc;
+
+---- Registro con mayor valor (max)
+	Select max(columna) as mayor from tablename;
+Buscar el menor:
+	Select min(columna) as menor from tablename;
+
+
+
+
+
+
+
+--------------------ALTERNATIVA PARA SELECCIONAR LAS COLUMNAS QUE SEAN DE INTERES PARA NOSOTROS-----------------
+
+select columna, columna2 from tablename;
+
+	Cambiar el nombre de la columna que se esta mostrando:
+			select columna, columna2 as nombre from user;
+
+
+
+
+
+
+-----------------------------------------------------------------------
+
+
+
+
+--------------------------UNIR TABLA CON OTRA TABLA----------------(joined)------------------------------
+cuando alguien cree un dato, se le asigna el id del usuario que creo el producto.
+Ex: (usando la base de datos basica que cree)....
+
+use Holamundio;
+
+CREATE table products (
+id int not null auto_increment,
+name varchar (50) not null,
+Created_by int not null, 
+marca varchar (50) not null,
+primary key (id),
+foreign key(Created_by) references user(id)
+);
+
+-------------------------
+para cambiar el nombre de una tabla:
+	rename  table tablename to tablenewname;
+
+---------------------------
+insertar datos de manera diferente y mas eficiente:
+INSERT INTO product (name, created_by, marca)
+values 
+	('nombreprod',1,'tipoprod'),
+	('ipad',1,'apple'),
+	('watch',1,'apple'),
+	('macbook',2,'apple');
+
+
+-----------------------Left join---------------------------
+para unir las tablas (en este caso, user y product) (left join)
+
+consulta:
+	select from user alias:
+	seelct u.id, u.email form user u;
+
+join
+	select u.id, u.email, p.name from user u left join product p on u.id = p.Created_by;
+
+--------------------------------------------right join---------------------------------------------------
+Lo mismo pero por la derecha xD, pero este trae todos los datos independientemente de la consulta...
+	en vez de usar la tabla 1 como principal usa la 2...
+			en otras palabras solo aparecen los usuarios que hicieron registros.
+
+
+select u.id, u.email, p.name from user u right join product p on u.id = p.Created_by;
+
+
+--------------------------------------------Inner join--------------------------------------------------
+No trae el producto y en el caso que exista tambien un usuario asociados...
+	interseccion de 2 tablas
+
+
+select u.id, u.email, p.name from user u inner join product p on u.id = p.Created_by;
+
+-----------------------------------------cross join--------------------------------------------------
+
+junta el registro numero uno con diferenters registro (hacerlo con cuidado devuelve muchisimos registros, lo demas es historia)
+1 con a,b,c,d etc...
+2 igual
+3 igual....
+
+select u.id, u.name u.email, p.id from user u cross join product p;
+
+
+
+
+instruccion
+-----------------------------------------Group by--------------------------------------------------
+ex: cout
+Por lo general agrupa elemento, toma todos lo registros y los agrupas en registros individuales.
+
+te puede decir la cantidad de usuario que crearon productos...
+
+ex:
+	select count(id), marca from product group by marca;
+
+-- si quiero consulta en especifico (having)
+select count(p.id), u.name from product p left join user u on u.id = 
+p.created_by group by p.Created_by
+having count(p.id) >= 2;
+
+
+---- Eliminar tabla de base de datos
+DROP TABLE tablename;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------
+cardinalidad: se refiere a las relaciones que tienen las tablas unas con otras
+
+entre una relacion tabla usuario y producto
+1 - n
+	un usuario puede tener varios productos y un productos solo un usuario...
+
+cardinalidad 2 
+n - n
+una orden de compra puede tener 1 producto pero un producto puede tener muchas ordenes de compra.
+
+
+------------------------------------------Modelamiento de bases de datos------------------------------------------
+modelos entidad relacion
+
+Para crear modelos entidad relaciones vamos a la casita en sql w...
+y en la opcion de la tabla en forma de diagrama, le damos al mas y add diagram...
+
+en esquema NN = not null
+	UQ = unique
+
+
+Para llevar ese esquema a codigo, le damos "copiar sql to clipboard"
+ex:
+CREATE TABLE IF NOT EXISTS `mydb`.`user` (
+  `id` INT NOT NULL,
+  `username` VARCHAR(16) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(32) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
+
+
+
+PARA CREAR LA REALACION DE LAS TABLAS ME BOY AL APARTADO FOREGIN KEY
+		1.47.15 vid
+		1.52.18 = crear tabla con relacion n:m = n a n rapido...
+
+		1.54.34 = convertir ese modelo entidad relacion en una consulta sql.
+
+
+
+
+
+
+
+
+
